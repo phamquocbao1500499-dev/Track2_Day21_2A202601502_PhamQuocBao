@@ -8,14 +8,18 @@ app = FastAPI()
 
 ARTIFACT_BUCKET = os.environ["ARTIFACT_BUCKET"]
 MODEL_KEY = "artifacts/current/model.joblib"
-MODEL_PATH = os.path.expanduser("~/models/model.joblib")
+MODEL_PATH = os.environ.get("MODEL_PATH", "/opt/income-api/models/model.joblib")
 
 
 def download_model():
-    """Tai file model.joblib tu cloud storage."""
+    """Download model from cloud storage if not exists locally."""
+    if os.path.exists(MODEL_PATH):
+        print(f"Model already exists at {MODEL_PATH}")
+        return
     client = storage.Client()
     bucket = client.bucket(ARTIFACT_BUCKET)
     blob = bucket.blob(MODEL_KEY)
+    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
     blob.download_to_filename(MODEL_PATH)
     print("Model downloaded from cloud storage.")
 
