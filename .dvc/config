@@ -1,0 +1,5 @@
+[core]
+    remote = labstore
+['remote "labstore"']
+    url = gs://lab-day21-vinai/dvc
+    credentialpath = ../sa-key.json
