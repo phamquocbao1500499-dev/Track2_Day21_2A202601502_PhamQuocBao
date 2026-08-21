@@ -45,9 +45,12 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Authenticate to Cloud Storage
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa-key.json
         run: |
           echo '${{ secrets.STORAGE_CREDENTIALS }}' > /tmp/sa-key.json
           gcloud auth activate-service-account --key-file=/tmp/sa-key.json
+          dvc remote modify labstore credentialpath /tmp/sa-key.json
 
       - name: Pull data with DVC
         run: dvc pull data/train_batch1.csv data/holdout.csv
